@@ -1,2 +1,6 @@
 # DONT PUSH .ENV FILE
 /staging-area/.env
+# DONT PUSH VIRTUAL ENVIRONMENT
+/staging-area/venv/
+
+/staging-area/secrets
