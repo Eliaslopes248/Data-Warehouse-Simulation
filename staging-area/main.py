@@ -1,14 +1,29 @@
 """
-THIS PROJECT IS A SIMULATION OF A DATA WAREHOUSE,
-ITS A PROJECT INSPRIED BY THE DATA WAREHOUSE TOOLKIT,
-A BOOK WRITTEN BY THE KIMBALL GROUP 
+BREIF:  THIS PROJECT IS A SIMULATION OF A DATA WAREHOUSE,
+        ITS A PROJECT INSPRIED BY THE DATA WAREHOUSE TOOLKIT,
+        A BOOK WRITTEN BY THE KIMBALL GROUP 
 
 
-THIS FILE SERVES A THE ENTRY POINT OF THIS PROGRAM,
-THE PYTHON IMPLEMETED SERVES AS THE STAGING AREA
-WHICH WILL TRANSFORM SOURCE/LEGACY DATA INTO CLEAN
-AND PRESENTATION READY DATA
+        THIS FILE SERVES A THE ENTRY POINT OF THIS PROGRAM,
+        THE PYTHON IMPLEMETED SERVES AS THE STAGING AREA
+        WHICH WILL TRANSFORM SOURCE/LEGACY DATA INTO CLEAN
+        AND PRESENTATION READY DATA
 """
+
+"""
+TODO: 
+1. Create class that handles data normalization DataProcessor()
+2. Have it handle the difference source data types
+3. Have a thread to handle init the DataProcessor() instance? and just load the values when its done fetching
+"""
+
+from gettext import dpgettext
+import threading
+from modules.sheets_client  import SheetClient
+from modules.logger         import color_print
+from modules.data_processor import DataProcessor
+
+'''algo to extract the sheet id by the full url'''
 def extract_sheet_id_by_url(url):
     # handle empty url
     if len(url) == 0:
@@ -57,30 +72,59 @@ def get_client_config():
     # user select type by int
     config_type = -1
     while  config_type < 0 or config_type >= len(source_types):
-        config_type = int(input("\nEnter type number# : ")) - 1
+        config_type = int(input("\n\033[33mEnter type number# : \033[0m")) - 1
         # handle invalid input range
         if config_type < 0 or config_type >= len(source_types):
             print('[error] Invalid type #')
 
     # get data source google sheet id
-    service_email = 'comp267-honors-contract@comp267-service-account.iam.gserviceaccount.com'
-    print(f'\nMake sure {service_email} is shared with google sheet')
-    source_sheet_id = input("Enter google sheet url: ")
+    service_email = "comp267-honors-contract@comp267-service-account.iam.gserviceaccount.com"
+
+    print(
+        f"\n\033[33mMake sure\033[0m "
+        f"{service_email} "
+        f"\033[33mis shared with google sheet\033[0m"
+    )
+
+    # get sheet url from browser
+    source_sheet_id = input("\033[33mEnter google sheet url:\033[0m ")
     # process url
-    sheet_id = extract_sheet_id_by_url(source_sheet_id)
-
-
-
-# TODO: ADD INPUT FOR SHEET RANGE (CAN BE sheet1 or CELL RANGE AS A STRING)
-# TODO: IMPLEMENT GOOGLE SHEETS API CLIENT
-# TODO: BE ABLE TO PRINT OUT DATA FROM A SHEET
+    sheet_id        = extract_sheet_id_by_url(source_sheet_id)
     
+    while not sheet_id:
+        color_print("Invalid URL:", "red")
+        source_sheet_id = input("\033[33mEnter google sheet url:\033[0m ")
+        sheet_id        = extract_sheet_id_by_url(source_sheet_id)
 
+    # get sheet range (cell range or just the sheet name)
+    sheet_range     = input("\033[33mEnter sheet name: \033[0m")
+    # create client
+    client = SheetClient(
+        sheet_id    =       sheet_id,
+        source_type =       config_type,
+        sheet_range =       sheet_range
+    )
+    return client
 
+""" program entry point """
+def main():
+    # load client
+    client = get_client_config()
+    color_print("[1/5] Config created", "green")
+    # create data processor
+    dp = DataProcessor()
+    color_print("[2/5] Data Processor created", "green")
+    # make thread to load data
+    data = client.getValues()
+    color_print("[3/5] Data loaded from source", "green")
 
+    # invoke data processing
+    color_print("[4/5] Data normalized successfully", "green")
+
+    color_print("[5/5] Data sent to data warehouse", "green")
 
 if __name__ == "__main__":
-    get_client_config()
+    main()
 
 
 

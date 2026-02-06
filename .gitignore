@@ -3,4 +3,4 @@
 # DONT PUSH VIRTUAL ENVIRONMENT
 /staging-area/venv/
 
-/staging-area/secrets
+/staging-area/secrets/cred.json

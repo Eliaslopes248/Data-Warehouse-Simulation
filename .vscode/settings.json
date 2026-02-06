@@ -1,0 +1,8 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/staging-area/venv/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/staging-area"
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.languageServer": "Pylance"
+}
