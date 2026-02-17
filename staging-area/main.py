@@ -16,8 +16,6 @@ TODO:
 2. Have it handle the difference source data types
 3. Have a thread to handle init the DataProcessor() instance? and just load the values when its done fetching
 """
-
-from gettext import dpgettext
 import threading
 from modules.sheets_client  import SheetClient
 from modules.logger         import color_print
@@ -117,7 +115,6 @@ def main():
     # make thread to load data
     data = client.getValues()
     color_print("[3/5] Data loaded from source", "green")
-
     # invoke data processing
     color_print("[4/5] Data normalized successfully", "green")
 

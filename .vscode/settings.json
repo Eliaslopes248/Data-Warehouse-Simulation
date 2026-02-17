@@ -4,5 +4,5 @@
         "${workspaceFolder}/staging-area"
     ],
     "python.analysis.autoImportCompletions": true,
-    "python.languageServer": "Pylance"
+    "python.languageServer": "None"
 }
